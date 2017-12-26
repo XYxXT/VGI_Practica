@@ -69,6 +69,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	AllocConsole();
+
 	BOOL bNameValid;
 
 	CMDITabInfo mdiTabParams;

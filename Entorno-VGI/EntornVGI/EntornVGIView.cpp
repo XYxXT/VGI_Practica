@@ -172,6 +172,12 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 		ON_COMMAND(ID_FINGER_1_LANDING, &CEntornVGIView::OnFinger1Landing)
 		ON_COMMAND(ID_ANIMACION_END, &CEntornVGIView::OnAnimacionEnd)
 		ON_COMMAND(ID_FINGER_1_TAKEOFF, &CEntornVGIView::OnFinger1Takeoff)
+		ON_COMMAND(ID_FINGER_2_LANDING, &CEntornVGIView::OnFinger2Landing)
+		ON_COMMAND(ID_FINGER_2_TAKEOFF, &CEntornVGIView::OnFinger2Takeoff)
+		ON_COMMAND(ID_FINGER_3_LANDING, &CEntornVGIView::OnFinger3Landing)
+		ON_COMMAND(ID_FINGER_3_TAKEOFF, &CEntornVGIView::OnFinger3Takeoff)
+		ON_COMMAND(ID_FINGER_4_LANDING, &CEntornVGIView::OnFinger4Landing)
+		ON_COMMAND(ID_FINGER_4_TAKEOFF, &CEntornVGIView::OnFinger4Takeoff)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3552,10 +3558,10 @@ void CEntornVGIView::Refl_MaterialOn()
 
 //	LEE LOS FICHERO OBJS PARA AEROPUERTOS
 void CEntornVGIView::loadObjs() {
-	char *nomfitx_pista = "./../Debug/pista_1.obj";
+	char *nomfitx_pista = "./../Debug/pista.obj";
 	char *nomfitx_finger = "./../Debug/finger.obj";
 	char *nomfitx_terminal = "./../Debug/tm2.obj";
-	char *nomfitx_prometheus = "./../Debug/prometheus.obj";
+	char *nomfitx_prometheus = "./../Debug/airplane.obj";
 
 
 	// i carreguem
@@ -3703,31 +3709,185 @@ void CEntornVGIView::OnUpdateAeroportFinger4(CCmdUI *pCmdUI)
 }
 
 void CEntornVGIView::drawAnimation() {
-	MyVariable::getInstance()->incrementPosition();
+	//MyVariable::getInstance()->incrementPosition();
+}
+
+void changerPosition() {
+	std::cout << "INSERT NEW POSITION " << std::endl;
+	_D3DVECTOR newPosition;
+	std::cin >> newPosition.x >> newPosition.y >> newPosition.z;
+	MyVariable::getInstance()->setPosition(newPosition);
+	std::cout << "POSITION INSERTED" << std::endl;
 }
 
 void CEntornVGIView::OnAnimacionEnd()
 {
 	MyVariable::getInstance()->setFinishAnimation(true);
-	MyVariable::getInstance()->setPosition(0);
+	MyVariable::getInstance()->clearAirplaneList();
 }
 
 void CEntornVGIView::OnFinger1Landing()
 {
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 270;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionSky());
+	air->setNextPositionList(MyVariable::getInstance()->getGoFinger1List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[1] = true;
 	if (MyVariable::getInstance()->isFinishAnimation()) {
 		MyVariable::getInstance()->setFinishAnimation(false);
 		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
 	}
-
-	objecte = ANIMATION;
 }
 
 void CEntornVGIView::OnFinger1Takeoff()
 {
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 45;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionFinger1());
+	air->setNextPositionList(MyVariable::getInstance()->getOutFinger1List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[1] = false;
 	if (MyVariable::getInstance()->isFinishAnimation()) {
 		MyVariable::getInstance()->setFinishAnimation(false);
 		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
 	}
+}
+
+
+void CEntornVGIView::OnFinger2Landing()
+{
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 270;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionSky());
+	air->setNextPositionList(MyVariable::getInstance()->getGoFinger2List());
+	MyVariable::getInstance()->addAirplane(air);
 
 	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[2] = true;
+	if (MyVariable::getInstance()->isFinishAnimation()) {
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+	}
+}
+
+
+void CEntornVGIView::OnFinger2Takeoff()
+{
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 315;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionFinger2());
+	air->setNextPositionList(MyVariable::getInstance()->getOutFinger2List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[2] = false;
+	if (MyVariable::getInstance()->isFinishAnimation()) {
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+	}
+}
+
+
+void CEntornVGIView::OnFinger3Landing()
+{
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 270;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionSky());
+	air->setNextPositionList(MyVariable::getInstance()->getGoFinger3List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[3] = true;
+	if (MyVariable::getInstance()->isFinishAnimation()) {
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+	}
+}
+
+
+void CEntornVGIView::OnFinger3Takeoff()
+{
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 315;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionFinger3());
+	air->setNextPositionList(MyVariable::getInstance()->getOutFinger3List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[3] = false;
+	if (MyVariable::getInstance()->isFinishAnimation()) {
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+	}
+}
+
+
+void CEntornVGIView::OnFinger4Landing()
+{
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 270;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionSky());
+	//air->setNextPositionList(MyVariable::getInstance()->getGoFinger4List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[4] = true;
+	if (MyVariable::getInstance()->isFinishAnimation()) {
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+	}
+}
+
+
+void CEntornVGIView::OnFinger4Takeoff()
+{
+	Airplane* air = new Airplane();
+	_D3DVECTOR* ds = new _D3DVECTOR;
+	ds->y = 0;
+	ds->x = 0;
+	ds->z = 315;
+	air->setDirection(ds);
+	air->setPosition(MyVariable::getInstance()->getPositionFinger4());
+	air->setNextPositionList(MyVariable::getInstance()->getOutFinger4List());
+	MyVariable::getInstance()->addAirplane(air);
+
+	objecte = ANIMATION;
+	MyVariable::getInstance()->getFingerList()[4] = false;
+	if (MyVariable::getInstance()->isFinishAnimation()) {
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+	}
 }

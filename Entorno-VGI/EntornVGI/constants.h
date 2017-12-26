@@ -174,6 +174,8 @@ struct LLUM
 #define ANIMATION 'D'
 #define PROMETHEUS 'p'
 #define FINGER_SIZE 5
+#define PI 3.14159265
 const double ANIMATION_TIME = 4;
+const float maxDistance = 1;
 
 #endif

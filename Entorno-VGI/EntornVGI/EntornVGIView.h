@@ -351,6 +351,12 @@ public:
 	afx_msg void OnFinger1Landing();
 	afx_msg void OnAnimacionEnd();
 	afx_msg void OnFinger1Takeoff();
+	afx_msg void OnFinger2Landing();
+	afx_msg void OnFinger2Takeoff();
+	afx_msg void OnFinger3Landing();
+	afx_msg void OnFinger3Takeoff();
+	afx_msg void OnFinger4Landing();
+	afx_msg void OnFinger4Takeoff();
 };
 
 #ifndef _DEBUG  // Versión de depuración en EntornVGIView.cpp

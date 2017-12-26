@@ -26,15 +26,15 @@ void finger() {
 	glPushMatrix();
 		glRotatef(90, 1, 0, 0);
 		glRotatef(90, 0, 1, 0);
-		glTranslatef(0, -1, 0);
-		glScalef(1, 1, 1);
+		glTranslatef(0, -0.75, 0);
+		glScalef(0.2, 0.2, 0.2);
 		glCallList(FINGER);
 	glPopMatrix();
 }
 
 void finger1() {
 	glPushMatrix();
-	glTranslatef(42, 0, 0);
+	glTranslatef(37, 0, 0);
 	glRotatef(-45, 0, 0, 1);
 	finger();
 	glPopMatrix();
@@ -42,7 +42,7 @@ void finger1() {
 
 void finger2() {
 	glPushMatrix();
-	glTranslatef(25, 0, 0);
+	glTranslatef(30, 0, 0);
 	glRotatef(45, 0, 0, 1);
 	finger();
 	glPopMatrix();
@@ -50,7 +50,7 @@ void finger2() {
 
 void finger3() {
 	glPushMatrix();
-	glTranslatef(2, 0, 0);
+	glTranslatef(7, 0, 0);
 	glRotatef(45, 0, 0, 1);
 	finger();
 	glPopMatrix();
@@ -58,7 +58,7 @@ void finger3() {
 
 void finger4() {
 	glPushMatrix();
-	glTranslatef(-21, 0, 0);
+	glTranslatef(-16, 0, 0);
 	glRotatef(45, 0, 0, 1);
 	finger();
 	glPopMatrix();
@@ -66,7 +66,7 @@ void finger4() {
 
 void fingers() {
 	glPushMatrix();
-	glTranslatef(0, -45, 0);
+	glTranslatef(0, -49, 0);
 
 
 	if (MyVariable::getInstance()->getFingerList()[0] || MyVariable::getInstance()->getFingerList()[1])
@@ -97,30 +97,34 @@ void aerportPrat(CColor col_object, bool ref_mat, bool sw_mat[4], bool textur, G
 
 }
 
-void drawAirplane(Airplane airplane) {
+void drawAirplane(Airplane* airplane) {
 	glPushMatrix();
-	glScalef(0.5, 0.5, 0.5);
-	glTranslatef(airplane.getPosition().x, airplane.getPosition().y, airplane.getPosition().z);
-	glRotatef(airplane.getDirection().z, 0, 0, 1);
-	glRotatef(airplane.getDirection().y, 0, 1, 0);
+	glTranslatef(airplane->getPosition()->x, airplane->getPosition()->y, airplane->getPosition()->z);
+	glRotatef(airplane->getDirection()->z, 0, 0, 1);
+	glRotatef(airplane->getDirection()->x, 1, 0, 0);
+	glRotatef(airplane->getDirection()->y, 0, 1, 0);
+	//glRotatef(90, 1, 0, 0);
+	glScalef(0.0002, 0.0002, 0.0002);
 	glCallList(PROMETHEUS);
 	glPopMatrix();
 }
 
 void animationAirport(CColor col_object, bool ref_mat, bool sw_mat[4], bool textur, GLuint VTextu[NUM_MAX_TEXTURES]){
 	aerportPrat(col_object, ref_mat, sw_mat, textur, VTextu);
-	glPushMatrix();
 
 	for (int i = 0; i < MyVariable::getInstance()->getAirplaneList().size(); i++) {
+		MyVariable::getInstance()->calcNextPositionAirplane(MyVariable::getInstance()->getAirplaneList()[i]);
 		drawAirplane(MyVariable::getInstance()->getAirplaneList()[i]);
 	}
 
-		glColor3f(1.0, 0.0, 0.0);
-		glScalef(0.5, 0.5, 0.5);
-		glTranslatef(0, 0, MyVariable::getInstance()->getPosition());
-		glRotatef(90, 1, 0, 0);
+	/*
+	glPushMatrix();
+		glTranslatef(60, -35, 0);
+		//glRotatef(90, 1, 0, 0);
+		glScalef(0.0002, 0.0002, 0.0002);
 		glCallList(PROMETHEUS);
 	glPopMatrix();
+	*/
 }
 
 
