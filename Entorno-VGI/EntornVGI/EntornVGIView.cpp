@@ -178,6 +178,10 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 		ON_COMMAND(ID_FINGER_3_TAKEOFF, &CEntornVGIView::OnFinger3Takeoff)
 		ON_COMMAND(ID_FINGER_4_LANDING, &CEntornVGIView::OnFinger4Landing)
 		ON_COMMAND(ID_FINGER_4_TAKEOFF, &CEntornVGIView::OnFinger4Takeoff)
+		ON_COMMAND(ID_PROJECCI32877, &CEntornVGIView::OnProjeccioFPP)
+		ON_UPDATE_COMMAND_UI(ID_PROJECCI32877, &CEntornVGIView::OnUpdateProjeccioFPP)
+		ON_COMMAND(ID_PROJECCI32878, &CEntornVGIView::OnProjeccioTPP)
+		ON_UPDATE_COMMAND_UI(ID_PROJECCI32878, &CEntornVGIView::OnUpdateProjeccioTPP)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -785,6 +789,41 @@ void CEntornVGIView::OnPaint()
 		SwapBuffers(m_pDC->GetSafeHdc());
 		break;
 
+	case FPP:
+		glEnable(GL_SCISSOR_TEST);
+		
+		Projeccio_Orto(-1, w, h);
+		vista_FPP(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe);
+		
+		glPushMatrix();
+			configura_Escena();    
+			glPushMatrix();
+				glScalef(ortoScale, ortoScale, ortoScale);			
+				dibuixa_Escena();		
+			glPopMatrix();
+		glPopMatrix();
+
+		SwapBuffers(m_pDC->GetSafeHdc());
+		break;
+	case TPP:
+		glEnable(GL_SCISSOR_TEST);
+
+		Projeccio_Orto(-1, w, h);
+		vista_TPP(OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
+			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe);
+
+		glPushMatrix();
+		configura_Escena();
+		glPushMatrix();
+		glScalef(ortoScale, ortoScale, ortoScale);
+		dibuixa_Escena();
+		glPopMatrix();
+		glPopMatrix();
+
+		SwapBuffers(m_pDC->GetSafeHdc());
+
+		break;
 	default:
 // Entorn VGI: Creació de la llista que dibuixarà els eixos Coordenades Món. Funció on està codi per dibuixar eixos	
 		glNewList(EIXOS, GL_COMPILE);
@@ -3554,7 +3593,68 @@ void CEntornVGIView::Refl_MaterialOn()
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // AEROPUERTOS
+
+//	VISTA
+void CEntornVGIView::OnProjeccioFPP()
+{
+	if (MyVariable::getInstance()->getAirplaneList().size() > 0) {
+		projeccio = FPP;
+		mobil = true;			zzoom = true;
+
+		InvalidateRect(NULL, false);
+	}
+	else
+		OnProjeccioPerspectiva();
+
+}
+
+
+void CEntornVGIView::OnUpdateProjeccioFPP(CCmdUI *pCmdUI)
+{
+	if (projeccio == FPP)
+		pCmdUI->SetCheck(1);
+	else
+		pCmdUI->SetCheck(0);
+}
+
+
+void CEntornVGIView::OnProjeccioTPP()
+{
+	if (MyVariable::getInstance()->getAirplaneList().size() > 0) {
+		projeccio = TPP;
+		mobil = true;			zzoom = true;
+
+		InvalidateRect(NULL, false);
+	}
+	else
+		OnProjeccioPerspectiva();
+}
+
+
+void CEntornVGIView::OnUpdateProjeccioTPP(CCmdUI *pCmdUI)
+{
+	if (projeccio == TPP)
+		pCmdUI->SetCheck(1);
+	else
+		pCmdUI->SetCheck(0);
+}
+
 
 //	LEE LOS FICHERO OBJS PARA AEROPUERTOS
 void CEntornVGIView::loadObjs() {
@@ -3708,8 +3808,13 @@ void CEntornVGIView::OnUpdateAeroportFinger4(CCmdUI *pCmdUI)
 	else pCmdUI->SetCheck(0);
 }
 
+
+// ANIMACION
+
 void CEntornVGIView::drawAnimation() {
-	//MyVariable::getInstance()->incrementPosition();
+	for (int i = 0; i < MyVariable::getInstance()->getAirplaneList().size(); i++) {
+		MyVariable::getInstance()->calcNextPositionAirplane(MyVariable::getInstance()->getAirplaneList()[i]);
+	}
 }
 
 void changerPosition() {
@@ -3891,3 +3996,4 @@ void CEntornVGIView::OnFinger4Takeoff()
 		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
 	}
 }
+

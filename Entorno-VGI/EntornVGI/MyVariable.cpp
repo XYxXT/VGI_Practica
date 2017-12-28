@@ -10,6 +10,7 @@ MyVariable::MyVariable() {
 	this->maxAngle.x = 1;
 	this->maxAngle.y = 5;
 	this->maxAngle.z = 10;
+	this->TPPDirection = 0;
 }
 
 MyVariable* MyVariable::myInstance = NULL;
@@ -44,6 +45,14 @@ void MyVariable::clearAirplaneList() {
 	this->airplaneList.resize(0);
 }
 
+void MyVariable::setTPPDirection(int direction) {
+	this->TPPDirection = direction;
+}
+
+int MyVariable::getTPPDirection() {
+	return this->TPPDirection;
+}
+
 
 
 void resetAngle(float &angle, float maxAngle, float originalAngle) {
@@ -70,6 +79,14 @@ float calcAngle(float sourceAngle, float destAngle, float maxAngle) {
 		else
 			return destAngle;
 	}
+}
+
+_D3DVECTOR MyVariable::calcNextPosition(_D3DVECTOR actualPosition, _D3DVECTOR vectorDirection, float distance) {
+	_D3DVECTOR nextPosition;
+	nextPosition.z = actualPosition.z + sinf((vectorDirection.x) * PI / 180) * distance;
+	nextPosition.x = actualPosition.x + -sinf((vectorDirection.z) * PI / 180) * distance;
+	nextPosition.y = actualPosition.y + cosf((vectorDirection.z) * PI / 180) * distance;
+	return nextPosition;
 }
 
 void MyVariable::calcNextPositionAirplane(Airplane *airplane) {
@@ -135,6 +152,23 @@ void MyVariable::calcNextPositionAirplane(Airplane *airplane) {
 			direction->x = calcAngle(direction->x, 0, maxAngle.x);
 		}
 
+
+		_D3DVECTOR nextPositionAir = calcNextPosition(*actualPosition, *direction, .5f);
+		if (directionVector.z >= 0)
+			actualPosition->z = nextPositionAir.z < nextPosition->z ? nextPositionAir.z : nextPosition->z;
+		else
+			actualPosition->z = nextPositionAir.z > nextPosition->z ? nextPositionAir.z : nextPosition->z;
+
+		if (directionVector.x >= 0)
+			actualPosition->x = nextPositionAir.x < nextPosition->x ? nextPositionAir.x : nextPosition->x;
+		else
+			actualPosition->x = nextPositionAir.x > nextPosition->x ? nextPositionAir.x : nextPosition->x;
+
+		if (directionVector.y >= 0)
+			actualPosition->y = nextPositionAir.y < nextPosition->y ? nextPositionAir.y : nextPosition->y;
+		else
+			actualPosition->y = nextPositionAir.y > nextPosition->y ? nextPositionAir.y : nextPosition->y;
+		/*
 		float tmpNext = actualPosition->z + sinf((direction->x) * PI / 180) * velocity;
 		if (directionVector.z >= 0)
 			actualPosition->z = tmpNext < nextPosition->z ? tmpNext : nextPosition->z;
@@ -152,7 +186,7 @@ void MyVariable::calcNextPositionAirplane(Airplane *airplane) {
 			actualPosition->y = tmpNext < nextPosition->y ? tmpNext : nextPosition->y;
 		else
 			actualPosition->y = tmpNext > nextPosition->y ? tmpNext : nextPosition->y;
-
+			*/
 		directionVector.x = nextPosition->x - actualPosition->x;
 		directionVector.y = nextPosition->y - actualPosition->y;
 		directionVector.z = nextPosition->z - actualPosition->z;

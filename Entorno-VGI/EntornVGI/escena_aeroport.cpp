@@ -113,8 +113,17 @@ void animationAirport(CColor col_object, bool ref_mat, bool sw_mat[4], bool text
 	aerportPrat(col_object, ref_mat, sw_mat, textur, VTextu);
 
 	for (int i = 0; i < MyVariable::getInstance()->getAirplaneList().size(); i++) {
-		MyVariable::getInstance()->calcNextPositionAirplane(MyVariable::getInstance()->getAirplaneList()[i]);
 		drawAirplane(MyVariable::getInstance()->getAirplaneList()[i]);
+
+		/*
+		glPushMatrix();
+			_D3DVECTOR pos = MyVariable::getInstance()->calcNextPosition(*MyVariable::getInstance()->getAirplaneList()[i]->getPosition(),
+				*MyVariable::getInstance()->getAirplaneList()[i]->getDirection(), .5f);
+			glTranslatef(pos.x, pos.y, pos.z + 0.5f);
+			glScalef(1.f, 1.0f, 1.0f);
+			glutSolidCube(1.0);
+		glPopMatrix();
+		*/
 	}
 
 	/*

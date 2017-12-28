@@ -357,6 +357,10 @@ public:
 	afx_msg void OnFinger3Takeoff();
 	afx_msg void OnFinger4Landing();
 	afx_msg void OnFinger4Takeoff();
+	afx_msg void OnProjeccioFPP();
+	afx_msg void OnUpdateProjeccioFPP(CCmdUI *pCmdUI);
+	afx_msg void OnProjeccioTPP();
+	afx_msg void OnUpdateProjeccioTPP(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // Versión de depuración en EntornVGIView.cpp

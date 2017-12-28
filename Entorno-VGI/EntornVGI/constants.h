@@ -177,5 +177,7 @@ struct LLUM
 #define PI 3.14159265
 const double ANIMATION_TIME = 4;
 const float maxDistance = 1;
+#define FPP 'F'
+#define TPP 'T'
 
 #endif

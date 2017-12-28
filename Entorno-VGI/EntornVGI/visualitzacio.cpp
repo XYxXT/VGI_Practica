@@ -708,3 +708,65 @@ static void cross(float v1[3], float v2[3], float result[3])
 	result[2] = v1[0] * v2[1] - v1[1] * v2[0];
 }
 
+void vista_FPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
+	bool textur, bool textur_map, bool ifix) {
+
+	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
+
+	_D3DVECTOR eyes = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), .5f);
+	_D3DVECTOR center = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), 1.f);
+
+	gluLookAt(eyes.x, eyes.y, eyes.z, center.x, center.y, center.z, 0, 0, 1);
+
+	Fons(col_fons);
+
+	if (ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	if (testv) glEnable(GL_CULL_FACE);
+	else glDisable(GL_CULL_FACE);
+
+	if (oculta) glEnable(GL_DEPTH_TEST);
+	else glDisable(GL_DEPTH_TEST);
+
+	if (bck_ln) glPolygonMode(GL_BACK, GL_LINE);
+}
+
+void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
+	bool textur, bool textur_map, bool ifix) {
+
+	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
+
+	_D3DVECTOR center = *airplane->getPosition();
+
+	_D3DVECTOR eyes;
+	switch (MyVariable::getInstance()->getTPPDirection())
+	{
+	case 0:
+		eyes = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), -2);
+		eyes.z = eyes.z + 5;
+		break;
+	default:
+		break;
+	}
+
+	gluLookAt(eyes.x, eyes.y, eyes.z, center.x, center.y, center.z, 0, 0, 1);
+
+	Fons(col_fons);
+
+	if (ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	if (testv) glEnable(GL_CULL_FACE);
+	else glDisable(GL_CULL_FACE);
+
+	if (oculta) glEnable(GL_DEPTH_TEST);
+	else glDisable(GL_DEPTH_TEST);
+
+	if (bck_ln) glPolygonMode(GL_BACK, GL_LINE);
+}
+

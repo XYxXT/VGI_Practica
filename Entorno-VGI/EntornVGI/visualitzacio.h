@@ -62,4 +62,13 @@ static void __gluMakeIdentityf(GLfloat m[16]);
 static void __gluMakeIdentityd(GLdouble m[16]);
 static void normalize(float v[3]);
 static void cross(float v1[3], float v2[3], float result[3]);
+
+void vista_FPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
+	bool textur, bool textur_map, bool ifix);
+
+void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
+	bool textur, bool textur_map, bool ifix);
+
 #endif
