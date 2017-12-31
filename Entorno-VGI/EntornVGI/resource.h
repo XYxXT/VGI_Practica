@@ -202,13 +202,14 @@
 #define ID_ANIMACION_END32876           32876
 #define ID_PROJECCI32877                32877
 #define ID_PROJECCI32878                32878
+#define ID_ANIMACION_SIMULATION         32879
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32879
+#define _APS_NEXT_COMMAND_VALUE         32880
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

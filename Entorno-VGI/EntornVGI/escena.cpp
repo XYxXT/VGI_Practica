@@ -15,7 +15,6 @@ GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat[4], bool textur)
 {
 	float altfar = 0;
-
 	switch (objecte)
 	{
 	// Dibuix del Robot

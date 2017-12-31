@@ -62,6 +62,7 @@ void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,bool te
 					}
 		else glDisable(GL_LIGHT0);
 
+
 	glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
 
 // Selecció del model d'iluminació segons variable ilumin
@@ -188,6 +189,7 @@ void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,bool te
 	if (ilumin!=FILFERROS) glEnable(GL_LIGHTING);   
 	if (textur) glEnable(GL_TEXTURE_2D);
 	glEndList();
+
 }
 
 // -------- Entorn VGI: ORTOGRÀFICA (Funcions Projeccio_Orto i Vista_Ortografica)
@@ -712,7 +714,7 @@ void vista_FPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
 	bool textur, bool textur_map, bool ifix) {
 
-	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+	//if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
 
 	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
 
@@ -738,7 +740,7 @@ void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
 	bool textur, bool textur_map, bool ifix) {
 
-	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+	//if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
 
 	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
 
@@ -747,11 +749,24 @@ void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 	_D3DVECTOR eyes;
 	switch (MyVariable::getInstance()->getTPPDirection())
 	{
-	case 0:
-		eyes = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), -2);
-		eyes.z = eyes.z + 5;
+	case 1:	//Perfil
+		eyes.x = center.x;
+		eyes.z = center.z + 5;
+		eyes.y = center.y + 10;
+		break;
+	case 2:	//Planta
+		eyes.x = center.x + 5;
+		eyes.z = center.z + 5;
+		eyes.y = center.y + 5;
+		break;
+	case 3:	//Alzada
+		eyes.x = center.x + 10;
+		eyes.z = center.z;
+		eyes.y = center.y + 5;
 		break;
 	default:
+		eyes = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), -2);
+		eyes.z = eyes.z + 5;
 		break;
 	}
 
@@ -769,4 +784,5 @@ void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 
 	if (bck_ln) glPolygonMode(GL_BACK, GL_LINE);
 }
+
 

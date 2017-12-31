@@ -91,6 +91,15 @@
 #include "Airplane.h"
 #include "MyVariable.h"
 #include <list>
+#include <string>
 #include <iostream>
+#include "windows.h"
+#include <stdio.h>
+#include <time.h>
+#include <random>
+#include <stdlib.h>
+#include "Plane.h"
+#include "Airport.h"
 #include <thread>
+#include <algorithm>
 

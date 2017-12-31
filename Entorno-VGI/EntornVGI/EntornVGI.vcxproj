@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Airplane.h" />
+    <ClInclude Include="Airport.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="ClassView.h" />
     <ClInclude Include="constants.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Obj3DS.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="OutputWnd.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="PropertiesWnd.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -150,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Airplane.cpp" />
+    <ClCompile Include="Airport.cpp" />
     <ClCompile Include="escena_aeroport.cpp" />
     <ClCompile Include="ChildFrm.cpp" />
     <ClCompile Include="ClassView.cpp" />
@@ -166,6 +169,7 @@
     <ClCompile Include="Obj3DS.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

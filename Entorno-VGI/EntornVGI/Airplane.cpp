@@ -3,10 +3,15 @@
 
 Airplane::Airplane(int id, _D3DVECTOR* position, _D3DVECTOR* direction, std::vector<_D3DVECTOR*> nextPositionList)
 {
-	this->id = id;
+	this->fingerId = id;
 	this->position = position;
 	this->direction = direction;
 	this->nextPositionList = nextPositionList;
+	this->finish = false;
+}
+
+Airplane::Airplane(int id) {
+	this->fingerId = id;
 }
 
 // GETTER SETTER
@@ -29,6 +34,15 @@ void Airplane::addNextPosition(_D3DVECTOR* position) {
 
 void Airplane::setFinish(bool finish) {
 	this->finish = finish;
+}
+
+int Airplane::getFingerID() {
+	return fingerId;
+}
+
+void Airplane::setFingerID(int id) {
+	MyVariable::getInstance()->getFingerList()[id] = true;
+	this->fingerId = id;
 }
 
 

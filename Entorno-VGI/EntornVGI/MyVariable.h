@@ -13,6 +13,15 @@ public:
 	std::vector<Airplane*> getAirplaneList();
 	void calcNextPositionAirplane(Airplane*);
 	_D3DVECTOR calcNextPosition(_D3DVECTOR actualPosition, _D3DVECTOR vectorDirection, float distance);
+	void setSimulation(bool);
+	bool isSimulation();
+	void setSimulationAirplane(Airplane*);
+	Airplane* getSimulationAirplane();
+	void setSimulationView(char);
+	char getSimulationView();
+	void prepareAirplane(Airplane*, int);
+	int getFreeFinger();
+	void removeAirplane(Airplane*);
 
 	void setPosition(_D3DVECTOR);
 	_D3DVECTOR getPosition();
@@ -41,6 +50,9 @@ private:
 	bool fingerList[FINGER_SIZE];
 	bool finishAnimation;
 	int TPPDirection;
+	bool _isSimulation;
+	Airplane* simulationAirplane;
+	char _simulationView;
 
 	_D3DVECTOR testPosition;
 	_D3DVECTOR maxAngle;

@@ -71,4 +71,5 @@ void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
 	bool textur, bool textur_map, bool ifix);
 
+
 #endif

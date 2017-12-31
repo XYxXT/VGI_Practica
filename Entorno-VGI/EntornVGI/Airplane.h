@@ -6,6 +6,7 @@ public:
 	Airplane() {};
 	~Airplane() {};
 
+	Airplane(int);
 	Airplane(int, _D3DVECTOR*, _D3DVECTOR*, std::vector<_D3DVECTOR*>);
 
 	void setDirection(_D3DVECTOR*);
@@ -14,6 +15,8 @@ public:
 	void setFinish(bool);
 	void addNextPosition(_D3DVECTOR*);
 	void removeNextPosition(int);
+	int getFingerID();
+	void setFingerID(int);
 
 	_D3DVECTOR* getDirection();
 	_D3DVECTOR* getPosition();
@@ -21,7 +24,7 @@ public:
 	bool isFinish();
 
 private:
-	int id;
+	int fingerId;
 	_D3DVECTOR* direction;
 	_D3DVECTOR* position;
 	std::vector<_D3DVECTOR*> nextPositionList;

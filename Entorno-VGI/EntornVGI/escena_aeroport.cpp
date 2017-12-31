@@ -88,7 +88,6 @@ void fingers() {
 void aerportPrat(CColor col_object, bool ref_mat, bool sw_mat[4], bool textur, GLuint VTextu[NUM_MAX_TEXTURES])
 {
 	SeleccionaMaterialiColor(MAT_CAP, sw_mat, ref_mat, col_object);
-
 	glPushMatrix();
 		pista();
 		terminal();
@@ -107,10 +106,16 @@ void drawAirplane(Airplane* airplane) {
 	glScalef(0.0002, 0.0002, 0.0002);
 	glCallList(PROMETHEUS);
 	glPopMatrix();
+
+	//printf("position :  %.2f %.2f %.2f  \n", airplane->getPosition()->x, airplane->getPosition()->y, airplane->getPosition()->x);
 }
 
 void animationAirport(CColor col_object, bool ref_mat, bool sw_mat[4], bool textur, GLuint VTextu[NUM_MAX_TEXTURES]){
 	aerportPrat(col_object, ref_mat, sw_mat, textur, VTextu);
+
+	if (MyVariable::getInstance()->getAirplaneList().size() > 0) {
+		airplaneFarol();
+	}
 
 	for (int i = 0; i < MyVariable::getInstance()->getAirplaneList().size(); i++) {
 		drawAirplane(MyVariable::getInstance()->getAirplaneList()[i]);
@@ -136,49 +141,28 @@ void animationAirport(CColor col_object, bool ref_mat, bool sw_mat[4], bool text
 	*/
 }
 
+void airplaneFarol() {
+	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
+	_D3DVECTOR _position = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), 0.1f);
+	_D3DVECTOR _direction = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), 0.5f);
+	GLfloat position[] = { _position.x, _position.y, _position.z, 1 };
+	GLfloat direction[] = { _direction.x - _position.x, _direction.y - _position.y, (_direction.z - 0.1f) - _position.z };
+	GLfloat ambiental[] = { 1, 0, 0, 1 };
+	GLfloat diffuse[] = { 1, 0, 0, 1 };
+	GLfloat specular[] = { 1, 0, 0, 1 };
+	GLfloat spotExponent[] = { 10 };
+	GLfloat spotCutOff[] = { 10 };
 
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT1, GL_POSITION, position);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, ambiental);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, direction);
+	glLightfv(GL_LIGHT1, GL_SPOT_EXPONENT, spotExponent);
+	glLightfv(GL_LIGHT1, GL_SPOT_CUTOFF, spotCutOff);
+	glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1);
+	//glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION, 0.1);
+	//glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.1);
 
-/*
-AeroportPrat::AeroportPrat()
-{
-	COBJModel* terminal = NULL;
-	COBJModel* landing_track = NULL;
-	COBJModel* plane = NULL;
-	COBJModel* finger = NULL;
+	glEnable(GL_LIGHT1);
 }
-
-
-AeroportPrat::~AeroportPrat()
-{
-}
-
-void AeroportPrat::LoadFixedOBJ()
-{
-	glPushMatrix();
-	glPushMatrix();
-	SelectObject(this->terminal);
-	glPopMatrix();
-
-	glPushMatrix();
-	SelectObject(this->landing_track);
-	glPopMatrix();
-	glPopMatrix();
-}
-
-bool AeroportPrat::SelectObject(COBJModel * obj)
-{
-	HGLRC     m_hRC;
-	CDC*      m_pDC;
-	CString fileName;
-	CFileDialog openOBJ(TRUE, NULL, NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, _T("OBJ Files(*.obj)|*.obj|Error Files (*.err)|*err|All Files (*.*)|*.*||"));
-	if (openOBJ.DoModal() != IDOK)
-		return false;
-	else
-		fileName = openOBJ.GetPathName();
-	const char* name = (LPCSTR)fileName.GetString();
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
-	this->terminal->LoadModel((char*)name, OBJECTEOBJ);
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
-	return false;
-}
-*/

@@ -432,6 +432,7 @@ BEGIN
             MENUITEM "TakeOff",                     ID_FINGER_4_TAKEOFF
         END
         MENUITEM "END",                         ID_ANIMACION_END
+        MENUITEM "Simulation",                  ID_ANIMACION_SIMULATION
     END
 END
 

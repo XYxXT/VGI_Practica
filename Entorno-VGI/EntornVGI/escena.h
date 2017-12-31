@@ -28,6 +28,7 @@ void sea(void);
 void camio(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]);
 void aerportPrat(CColor col_object, bool ref_mat, bool sw_mat[4], bool textur, GLuint VTextu[NUM_MAX_TEXTURES]);
 void animationAirport(CColor col_object, bool ref_mat, bool sw_mat[4], bool textur, GLuint VTextu[NUM_MAX_TEXTURES]);
+void airplaneFarol();
 
 void cilindre(GLdouble baseRadius, GLdouble topRadius, GLdouble height, GLint slices, GLint stacks);
 

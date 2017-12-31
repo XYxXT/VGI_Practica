@@ -182,6 +182,8 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 		ON_UPDATE_COMMAND_UI(ID_PROJECCI32877, &CEntornVGIView::OnUpdateProjeccioFPP)
 		ON_COMMAND(ID_PROJECCI32878, &CEntornVGIView::OnProjeccioTPP)
 		ON_UPDATE_COMMAND_UI(ID_PROJECCI32878, &CEntornVGIView::OnUpdateProjeccioTPP)
+		ON_COMMAND(ID_ANIMACION_SIMULATION, &CEntornVGIView::OnAnimacionSimulation)
+		ON_UPDATE_COMMAND_UI(ID_ANIMACION_SIMULATION, &CEntornVGIView::OnUpdateAnimacionSimulation)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -631,6 +633,17 @@ void CEntornVGIView::OnDraw(CDC* /*pDC*/)
 
 void CEntornVGIView::OnPaint()
 {
+
+	if (MyVariable::getInstance()->isSimulation()) {
+		if (MyVariable::getInstance()->getSimulationAirplane() == NULL) {
+			projeccio = PERSPECT;
+		}
+		else {
+			projeccio = MyVariable::getInstance()->getSimulationView();
+		}
+	}
+
+
 	CPaintDC dc(this); // device context for painting
 // TODO: Agregue aquí su código de controlador de mensajes
 	GLfloat vpv[3] = { 0.0, 0.0, 1.0 };
@@ -1249,6 +1262,8 @@ void CEntornVGIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (pan) Teclat_Pan(nChar, nRepCnt);
 			 else if (navega) Teclat_Navega(nChar, nRepCnt);
 		}
+
+	myKeyPress(nChar);
 
 // Crida a OnPaint() per redibuixar l'escena
 	InvalidateRect(NULL, false);
@@ -2581,7 +2596,7 @@ void CEntornVGIView::OnProjeccioPerspectiva()
 // TODO: Agregue aquí su código de controlador de comandos
 	projeccio = PERSPECT;
 	mobil = true;			zzoom = true;
-
+	MyVariable::getInstance()->setSimulationView(projeccio);
 // Crida a OnPaint() per redibuixar l'escena
 	InvalidateRect(NULL, false);
 
@@ -2600,7 +2615,7 @@ void CEntornVGIView::OnProjeccioOrtografica()
 	// TODO: Agregue aquí su código de controlador de comandos
 	projeccio = ORTO;
 	mobil = true;			zzoom = true;
-
+	MyVariable::getInstance()->setSimulationView(projeccio);
 	// Crida a OnPaint() per redibuixar l'escena
 	InvalidateRect(NULL, false);
 }
@@ -2619,7 +2634,7 @@ void CEntornVGIView::OnProjeccioAxonometrica()
 	// TODO: Agregue aquí su código de controlador de comandos
 	projeccio = AXONOM;
 	mobil = true;			zzoom = true;
-
+	MyVariable::getInstance()->setSimulationView(projeccio);
 	// Crida a OnPaint() per redibuixar l'escena
 	InvalidateRect(NULL, false);
 }
@@ -3613,9 +3628,10 @@ void CEntornVGIView::Refl_MaterialOn()
 //	VISTA
 void CEntornVGIView::OnProjeccioFPP()
 {
-	if (MyVariable::getInstance()->getAirplaneList().size() > 0) {
+	if (MyVariable::getInstance()->getAirplaneList().size() > 0 || MyVariable::getInstance()->getSimulationAirplane() != NULL) {
 		projeccio = FPP;
 		mobil = true;			zzoom = true;
+		MyVariable::getInstance()->setSimulationView(projeccio);
 
 		InvalidateRect(NULL, false);
 	}
@@ -3636,10 +3652,10 @@ void CEntornVGIView::OnUpdateProjeccioFPP(CCmdUI *pCmdUI)
 
 void CEntornVGIView::OnProjeccioTPP()
 {
-	if (MyVariable::getInstance()->getAirplaneList().size() > 0) {
+	if (MyVariable::getInstance()->getAirplaneList().size() > 0 || MyVariable::getInstance()->getSimulationAirplane() != NULL) {
 		projeccio = TPP;
 		mobil = true;			zzoom = true;
-
+		MyVariable::getInstance()->setSimulationView(projeccio);
 		InvalidateRect(NULL, false);
 	}
 	else
@@ -3829,171 +3845,310 @@ void CEntornVGIView::OnAnimacionEnd()
 {
 	MyVariable::getInstance()->setFinishAnimation(true);
 	MyVariable::getInstance()->clearAirplaneList();
+	MyVariable::getInstance()->setSimulationAirplane(NULL);
+	MyVariable::getInstance()->setSimulation(false);
+	MyVariable::getInstance()->clearAirplaneList();
 }
 
 void CEntornVGIView::OnFinger1Landing()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 270;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionSky());
-	air->setNextPositionList(MyVariable::getInstance()->getGoFinger1List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 270;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionSky());
+		air->setNextPositionList(MyVariable::getInstance()->getGoFinger1List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[1] = true;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[1] = true;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 void CEntornVGIView::OnFinger1Takeoff()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 45;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionFinger1());
-	air->setNextPositionList(MyVariable::getInstance()->getOutFinger1List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 45;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionFinger1());
+		air->setNextPositionList(MyVariable::getInstance()->getOutFinger1List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[1] = false;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[1] = false;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 
 void CEntornVGIView::OnFinger2Landing()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 270;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionSky());
-	air->setNextPositionList(MyVariable::getInstance()->getGoFinger2List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 270;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionSky());
+		air->setNextPositionList(MyVariable::getInstance()->getGoFinger2List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[2] = true;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[2] = true;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 
 void CEntornVGIView::OnFinger2Takeoff()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 315;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionFinger2());
-	air->setNextPositionList(MyVariable::getInstance()->getOutFinger2List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 315;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionFinger2());
+		air->setNextPositionList(MyVariable::getInstance()->getOutFinger2List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[2] = false;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[2] = false;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 
 void CEntornVGIView::OnFinger3Landing()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 270;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionSky());
-	air->setNextPositionList(MyVariable::getInstance()->getGoFinger3List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 270;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionSky());
+		air->setNextPositionList(MyVariable::getInstance()->getGoFinger3List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[3] = true;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[3] = true;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 
 void CEntornVGIView::OnFinger3Takeoff()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 315;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionFinger3());
-	air->setNextPositionList(MyVariable::getInstance()->getOutFinger3List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 315;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionFinger3());
+		air->setNextPositionList(MyVariable::getInstance()->getOutFinger3List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[3] = false;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[3] = false;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 
 void CEntornVGIView::OnFinger4Landing()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 270;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionSky());
-	//air->setNextPositionList(MyVariable::getInstance()->getGoFinger4List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 270;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionSky());
+		air->setNextPositionList(MyVariable::getInstance()->getGoFinger4List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[4] = true;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[4] = true;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
 
 
 void CEntornVGIView::OnFinger4Takeoff()
 {
-	Airplane* air = new Airplane();
-	_D3DVECTOR* ds = new _D3DVECTOR;
-	ds->y = 0;
-	ds->x = 0;
-	ds->z = 315;
-	air->setDirection(ds);
-	air->setPosition(MyVariable::getInstance()->getPositionFinger4());
-	air->setNextPositionList(MyVariable::getInstance()->getOutFinger4List());
-	MyVariable::getInstance()->addAirplane(air);
+	if (!MyVariable::getInstance()->isSimulation()) {
+		Airplane* air = new Airplane();
+		_D3DVECTOR* ds = new _D3DVECTOR;
+		ds->y = 0;
+		ds->x = 0;
+		ds->z = 315;
+		air->setDirection(ds);
+		air->setPosition(MyVariable::getInstance()->getPositionFinger4());
+		air->setNextPositionList(MyVariable::getInstance()->getOutFinger4List());
+		MyVariable::getInstance()->addAirplane(air);
 
-	objecte = ANIMATION;
-	MyVariable::getInstance()->getFingerList()[4] = false;
-	if (MyVariable::getInstance()->isFinishAnimation()) {
-		MyVariable::getInstance()->setFinishAnimation(false);
-		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->getFingerList()[4] = false;
+		if (MyVariable::getInstance()->isFinishAnimation()) {
+			MyVariable::getInstance()->setFinishAnimation(false);
+			SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+		}
 	}
 }
+
+//	OTHER
+void CEntornVGIView::myKeyPress(UINT key) {
+	int ttp = MyVariable::getInstance()->getTPPDirection();
+	if (key == 107) {
+		if (ttp == 3)
+			ttp = 0;
+		else
+			ttp++;
+		
+	}
+	else if (key == 109) {
+		if (ttp == 0)
+			ttp = 3;
+		else
+			ttp--;
+	}
+	MyVariable::getInstance()->setTPPDirection(ttp);
+}
+
+
+//	SIMULATION
+void check_fingers(Airport* el_prat) {
+
+	vector<Plane*> departures;
+	for (Plane* plane : el_prat->fingers) {
+
+		if (time(NULL) - plane->service_time >= plane->service_duration) {
+			departures.push_back(plane);
+		}
+	}
+
+	if (departures.size() != 0)
+		el_prat->departure(departures);
+
+}
+
+
+void process_plane(Airport* el_prat, std::list<Plane*> &planes) {
+
+	std::list<Plane*> temp = planes;
+
+	int fingerId;
+	for (Plane* plane : temp) {
+
+		if (el_prat->runways.size() < el_prat->n_runways) {
+			el_prat->runways.push_back(planes.back());
+			planes.back()->landing_time = time(NULL);
+		}
+
+		if (time(NULL) - plane->landing_time >= el_prat->landing_duration) {
+			if ((fingerId = MyVariable::getInstance()->getFreeFinger()) != -1) {
+				printf("Plane: %d has landed\n", plane->id);
+				//plane->airplane->setFingerID(fingerId);
+				//MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
+				//MyVariable::getInstance()->addAirplane(plane->airplane);
+				planes.remove(plane);
+				el_prat->service_plane(plane);
+			}
+		}
+	}
+}
+
+void initSimulation() {
+
+	std::default_random_engine generator_1;
+	std::normal_distribution<float> distribution_1(mean_arrival_time, sd_arrival_time);
+
+	std::default_random_engine generator_2;
+	std::normal_distribution<float> distribution_2(mean_service_time, sd_service_time);
+
+
+	srand(static_cast <unsigned> (time(NULL)));
+	std::list<Plane*> planes;
+	Airport el_prat(4, 2, 10, 10);
+
+	planes.push_back(new Plane(distribution_1(generator_1), distribution_2(generator_2)));
+
+	time_t last_arrival = time(NULL);
+	time_t next_arrival = planes.back()->landing_duration;
+
+	printf("Plane: %d ready to land\n", planes.back()->id);
+	process_plane(&el_prat, planes);
+
+
+	while (true && MyVariable::getInstance()->isSimulation()) {
+		check_fingers(&el_prat);
+		if (time(NULL) - last_arrival >= next_arrival) {
+			planes.push_back(new Plane(distribution_1(generator_1), distribution_2(generator_2)));
+			last_arrival = planes.back()->spawn_time;
+			next_arrival = planes.back()->landing_duration;
+			printf("Plane: %d ready to land\n", planes.back()->id);
+			process_plane(&el_prat, planes);
+		}
+	}
+
+	printf("END SIMULATION \n");
+}
+
+void CEntornVGIView::OnAnimacionSimulation()
+{
+	if (!MyVariable::getInstance()->isSimulation()) {
+		MyVariable::getInstance()->setSimulation(true);
+		objecte = ANIMATION;
+		MyVariable::getInstance()->setFinishAnimation(false);
+		SetTimer(WM_TIMER, ANIMATION_TIME, NULL);
+
+		std::thread simulationThread(initSimulation);
+		simulationThread.detach();
+
+	}
+}
+
+void CEntornVGIView::OnUpdateAnimacionSimulation(CCmdUI *pCmdUI)
+{
+	if (MyVariable::getInstance()->isSimulation())	pCmdUI->SetCheck(1);
+	else pCmdUI->SetCheck(0);
+}
+
+
 
