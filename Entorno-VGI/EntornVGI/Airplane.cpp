@@ -12,6 +12,7 @@ Airplane::Airplane(int id, _D3DVECTOR* position, _D3DVECTOR* direction, std::vec
 
 Airplane::Airplane(int id) {
 	this->fingerId = id;
+	this->finish = false;
 }
 
 // GETTER SETTER

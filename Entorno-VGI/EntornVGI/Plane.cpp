@@ -13,6 +13,7 @@ Plane::Plane(int landing_duration, int service_duration) {
 	this->cost = rand() % 2 + 1;
 	this->cost_importance = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 	this->priority = calculate_priority();
+	this->landing = true;
 
 	this->airplane = new Airplane();
 

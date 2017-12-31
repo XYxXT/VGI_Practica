@@ -3854,6 +3854,7 @@ void CEntornVGIView::OnFinger1Landing()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(1);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -3876,6 +3877,7 @@ void CEntornVGIView::OnFinger1Takeoff()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(1);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -3899,6 +3901,7 @@ void CEntornVGIView::OnFinger2Landing()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(2);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -3922,6 +3925,7 @@ void CEntornVGIView::OnFinger2Takeoff()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(2);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -3945,6 +3949,7 @@ void CEntornVGIView::OnFinger3Landing()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(3);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -3968,6 +3973,7 @@ void CEntornVGIView::OnFinger3Takeoff()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(3);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -3991,6 +3997,7 @@ void CEntornVGIView::OnFinger4Landing()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(4);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -4014,6 +4021,7 @@ void CEntornVGIView::OnFinger4Takeoff()
 {
 	if (!MyVariable::getInstance()->isSimulation()) {
 		Airplane* air = new Airplane();
+		air->setFingerID(4);
 		_D3DVECTOR* ds = new _D3DVECTOR;
 		ds->y = 0;
 		ds->x = 0;
@@ -4055,7 +4063,7 @@ void CEntornVGIView::myKeyPress(UINT key) {
 //	SIMULATION
 void check_fingers(Airport* el_prat) {
 
-	vector<Plane*> departures;
+	std::vector<Plane*> departures;
 	for (Plane* plane : el_prat->fingers) {
 
 		if (time(NULL) - plane->service_time >= plane->service_duration) {
@@ -4068,31 +4076,65 @@ void check_fingers(Airport* el_prat) {
 
 }
 
+void check_runways(Airport* el_prat) {
 
-void process_plane(Airport* el_prat, std::list<Plane*> &planes) {
+	std::list<Plane*> temp = el_prat->buffer;
 
-	std::list<Plane*> temp = planes;
 
-	int fingerId;
 	for (Plane* plane : temp) {
-
 		if (el_prat->runways.size() < el_prat->n_runways) {
-			el_prat->runways.push_back(planes.back());
-			planes.back()->landing_time = time(NULL);
+
+			el_prat->runways.push_back(plane);
+			if (plane->landing)
+				plane->landing_time = time(NULL);
+			else
+				plane->take_off_time = time(NULL);
+
+			el_prat->buffer.remove(plane);
 		}
 
-		if (time(NULL) - plane->landing_time >= el_prat->landing_duration) {
-			if ((fingerId = MyVariable::getInstance()->getFreeFinger()) != -1) {
-				printf("Plane: %d has landed\n", plane->id);
-				//plane->airplane->setFingerID(fingerId);
-				//MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
-				//MyVariable::getInstance()->addAirplane(plane->airplane);
-				planes.remove(plane);
-				el_prat->service_plane(plane);
-			}
-		}
 	}
+
 }
+
+
+void process_planes(Airport* el_prat) {
+
+	std::list<Plane*> temp = el_prat->runways;
+
+
+	for (Plane* plane : temp) {
+		if (plane->landing) {
+
+			if (time(NULL) - plane->landing_time >= el_prat->landing_duration) {
+				printf("Plane %d has landed\n", plane->id);
+				el_prat->service_plane(plane);
+				el_prat->runways.remove(plane);
+				plane->landing = false;
+				plane->airplane->setFingerID(MyVariable::getInstance()->getFreeFinger());
+				MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
+				MyVariable::getInstance()->setSimulationAirplane(plane->airplane);
+				MyVariable::getInstance()->addAirplane(plane->airplane);
+			}
+
+		}
+		else {
+
+			if (time(NULL) - plane->take_off_time >= el_prat->take_off_duration) {
+				printf("Plane: %d is taking off with Priority %.2f\n", plane->id, plane->priority);
+				el_prat->runways.remove(plane);
+			}
+
+
+		}
+
+	}
+
+}
+
+//plane->airplane->setFingerID(fingerId);
+//MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
+//MyVariable::getInstance()->addAirplane(plane->airplane);
 
 void initSimulation() {
 
@@ -4104,27 +4146,34 @@ void initSimulation() {
 
 
 	srand(static_cast <unsigned> (time(NULL)));
-	std::list<Plane*> planes;
-	Airport el_prat(4, 2, 10, 10);
+	Airport el_prat(n_fingers, n_runways, landing_duration, take_off_duration);
 
-	planes.push_back(new Plane(distribution_1(generator_1), distribution_2(generator_2)));
-
+	Plane* plane = new Plane(distribution_1(generator_1), distribution_2(generator_2));
+	el_prat.buffer.push_back(plane);
 	time_t last_arrival = time(NULL);
-	time_t next_arrival = planes.back()->landing_duration;
+	time_t next_arrival = plane->landing_duration;
 
-	printf("Plane: %d ready to land\n", planes.back()->id);
-	process_plane(&el_prat, planes);
+	printf("Plane: %d ready to land\n", plane->id);
+	process_planes(&el_prat);
+
 
 
 	while (true && MyVariable::getInstance()->isSimulation()) {
+
+
 		check_fingers(&el_prat);
+		check_runways(&el_prat);
+
+
 		if (time(NULL) - last_arrival >= next_arrival) {
-			planes.push_back(new Plane(distribution_1(generator_1), distribution_2(generator_2)));
-			last_arrival = planes.back()->spawn_time;
-			next_arrival = planes.back()->landing_duration;
-			printf("Plane: %d ready to land\n", planes.back()->id);
-			process_plane(&el_prat, planes);
+			Plane* plane = new Plane(distribution_1(generator_1), distribution_2(generator_2));
+			el_prat.buffer.push_back(plane);
+			last_arrival = plane->spawn_time;
+			next_arrival = plane->landing_duration;
+			printf("Plane: %d ready to land\n", plane->id);
+			process_planes(&el_prat);
 		}
+
 	}
 
 	printf("END SIMULATION \n");
@@ -4149,6 +4198,4 @@ void CEntornVGIView::OnUpdateAnimacionSimulation(CCmdUI *pCmdUI)
 	if (MyVariable::getInstance()->isSimulation())	pCmdUI->SetCheck(1);
 	else pCmdUI->SetCheck(0);
 }
-
-
 

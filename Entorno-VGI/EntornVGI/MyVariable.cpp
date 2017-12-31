@@ -79,8 +79,10 @@ char MyVariable::getSimulationView() {
 
 int MyVariable::getFreeFinger() {
 	for (int i = 1; i <= FINGER_SIZE; i++) {
-		if (this->fingerList[i] == false)
+		if (this->fingerList[i] == false) {
+			this->fingerList[i] = true;
 			return i;
+		}
 	}
 	return -1;
 }
@@ -88,6 +90,7 @@ int MyVariable::getFreeFinger() {
 void MyVariable::removeAirplane(Airplane* airplane) {
 	this->fingerList[airplane->getFingerID()] = false;
 	this->airplaneList.erase(std::remove(this->airplaneList.begin(), this->airplaneList.end(), airplane), this->airplaneList.end());
+	MyVariable::getInstance()->setSimulationAirplane(NULL);
 }
 
 void resetAngle(float &angle, float maxAngle, float originalAngle) {
@@ -188,7 +191,7 @@ void MyVariable::calcNextPositionAirplane(Airplane *airplane) {
 		}
 
 
-		_D3DVECTOR nextPositionAir = calcNextPosition(*actualPosition, *direction, .5f);
+		_D3DVECTOR nextPositionAir = calcNextPosition(*actualPosition, *direction, 1);
 		if (directionVector.z >= 0)
 			actualPosition->z = nextPositionAir.z < nextPosition->z ? nextPositionAir.z : nextPosition->z;
 		else
@@ -233,8 +236,8 @@ void MyVariable::calcNextPositionAirplane(Airplane *airplane) {
 	else {
 		if (airplane->isFinish())
 			MyVariable::removeAirplane(airplane);
-		else
-			direction->x = calcAngle(direction->x, 0, maxAngle.x);
+		//else
+			//direction->x = calcAngle(direction->x, 0, maxAngle.x);
 		//resetAngle(direction->x, maxAngle.x, 90);
 		//resetAngle(direction->y, maxAngle.y);
 		//resetAngle(direction->z, maxAngle.z, 0);
@@ -590,7 +593,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 	if (state == 0) {
 		switch (air->getFingerID())
 		{
-		case 0:
+		case 1:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 270;
@@ -598,7 +601,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 			air->setPosition(MyVariable::getInstance()->getPositionSky());
 			air->setNextPositionList(MyVariable::getInstance()->getGoFinger1List());
 			break;
-		case 1:
+		case 2:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 270;
@@ -606,7 +609,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 			air->setPosition(MyVariable::getInstance()->getPositionSky());
 			air->setNextPositionList(MyVariable::getInstance()->getGoFinger2List());
 			break;
-		case 2:
+		case 3:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 270;
@@ -614,7 +617,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 			air->setPosition(MyVariable::getInstance()->getPositionSky());
 			air->setNextPositionList(MyVariable::getInstance()->getGoFinger3List());
 			break;
-		case 3:
+		case 4:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 270;
@@ -629,7 +632,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 	else {
 		switch (air->getFingerID())
 		{
-		case 0:
+		case 1:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 45;
@@ -637,7 +640,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 			air->setPosition(MyVariable::getInstance()->getPositionFinger1());
 			air->setNextPositionList(MyVariable::getInstance()->getOutFinger1List());
 			break;
-		case 1:
+		case 2:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 315;
@@ -645,7 +648,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 			air->setPosition(MyVariable::getInstance()->getPositionFinger2());
 			air->setNextPositionList(MyVariable::getInstance()->getOutFinger2List());
 			break;
-		case 2:
+		case 3:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 315;
@@ -653,7 +656,7 @@ void MyVariable::prepareAirplane(Airplane* air, int state) {
 			air->setPosition(MyVariable::getInstance()->getPositionFinger3());
 			air->setNextPositionList(MyVariable::getInstance()->getOutFinger3List());
 			break;
-		case 3:
+		case 4:
 			ds->y = 0;
 			ds->x = 0;
 			ds->z = 315;

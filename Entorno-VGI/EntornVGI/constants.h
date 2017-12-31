@@ -179,9 +179,13 @@ const double ANIMATION_TIME = 4;
 const float maxDistance = 1;
 #define FPP 'F'
 #define TPP 'T'
-const float mean_arrival_time = 1.0;
-const float sd_arrival_time = 1.0;
-const float mean_service_time = 2.0;
-const float sd_service_time = 1.0;
+const float mean_arrival_time = 5;
+const float sd_arrival_time = 1;
+const float mean_service_time = 5;
+const float sd_service_time = 1;
+const int n_fingers = 4;
+const int n_runways = 1;
+const float landing_duration = 5;
+const float take_off_duration = 5;
 
 #endif

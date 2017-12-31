@@ -3,7 +3,7 @@
 class Airplane
 {
 public:
-	Airplane() {};
+	Airplane() { this->finish = false; };
 	~Airplane() {};
 
 	Airplane(int);

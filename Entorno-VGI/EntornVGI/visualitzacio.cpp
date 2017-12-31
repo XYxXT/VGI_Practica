@@ -715,8 +715,15 @@ void vista_FPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 	bool textur, bool textur_map, bool ifix) {
 
 	//if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
-
-	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
+	
+	Airplane* airplane;
+	if (MyVariable::getInstance()->isSimulation()) {
+		airplane = MyVariable::getInstance()->getSimulationAirplane();
+	}
+	else {
+		airplane = MyVariable::getInstance()->getAirplaneList().back();
+	}
+	 
 
 	_D3DVECTOR eyes = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), .5f);
 	_D3DVECTOR center = MyVariable::getInstance()->calcNextPosition(*airplane->getPosition(), *airplane->getDirection(), 1.f);
@@ -742,7 +749,13 @@ void vista_TPP(GLfloat Raux, CColor col_fons, CColor col_object, char objecte, G
 
 	//if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
 
-	Airplane* airplane = MyVariable::getInstance()->getAirplaneList().back();
+	Airplane* airplane;
+	if (MyVariable::getInstance()->isSimulation()) {
+		airplane = MyVariable::getInstance()->getSimulationAirplane();
+	}
+	else {
+		airplane = MyVariable::getInstance()->getAirplaneList().back();
+	}
 
 	_D3DVECTOR center = *airplane->getPosition();
 

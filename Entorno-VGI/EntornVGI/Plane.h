@@ -7,7 +7,6 @@ public:
 	int cost;
 	float cost_importance;
 	float priority;
-	Airplane* airplane;
 
 
 	time_t spawn_time;
@@ -19,7 +18,12 @@ public:
 	time_t landing_time;
 	time_t take_off_time;
 
+	bool landing;
+	Airplane* airplane;
+
 	Plane(int, int);
 	float calculate_priority();
+
+
 };
 

@@ -6,6 +6,7 @@ public:
 	int n_runways;
 	std::list<Plane*> runways;
 	std::list<Plane*> fingers;
+	std::list<Plane*> buffer;
 	float landing_duration;
 	float take_off_duration;
 
