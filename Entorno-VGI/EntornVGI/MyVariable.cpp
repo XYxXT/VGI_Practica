@@ -88,7 +88,7 @@ int MyVariable::getFreeFinger() {
 }
 
 void MyVariable::removeAirplane(Airplane* airplane) {
-	this->fingerList[airplane->getFingerID()] = false;
+	//this->fingerList[airplane->getFingerID()] = false;
 	this->airplaneList.erase(std::remove(this->airplaneList.begin(), this->airplaneList.end(), airplane), this->airplaneList.end());
 	MyVariable::getInstance()->setSimulationAirplane(NULL);
 }

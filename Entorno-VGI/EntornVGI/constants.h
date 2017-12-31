@@ -179,9 +179,9 @@ const double ANIMATION_TIME = 4;
 const float maxDistance = 1;
 #define FPP 'F'
 #define TPP 'T'
-const float mean_arrival_time = 5;
+const float mean_arrival_time = 1;
 const float sd_arrival_time = 1;
-const float mean_service_time = 5;
+const float mean_service_time = 15;
 const float sd_service_time = 1;
 const int n_fingers = 4;
 const int n_runways = 1;

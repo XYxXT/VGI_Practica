@@ -41,9 +41,7 @@ void Airport::departure(std::vector<Plane*> departures) {
 		this->buffer.push_back(plane);
 		printf("Plane %d is ready for take-off\n", plane->id);
 		this->fingers.erase(std::remove(this->fingers.begin(), this->fingers.end(), plane), this->fingers.end());
-		MyVariable::getInstance()->prepareAirplane(plane->airplane, 1);
-		MyVariable::getInstance()->setSimulationAirplane(plane->airplane);
-		plane->airplane->setFinish(true);
+		MyVariable::getInstance()->getFingerList()[plane->airplane->getFingerID()] = false;
 	}
 }
 

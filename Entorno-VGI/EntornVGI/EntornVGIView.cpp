@@ -4123,6 +4123,9 @@ void process_planes(Airport* el_prat) {
 			if (time(NULL) - plane->take_off_time >= el_prat->take_off_duration) {
 				printf("Plane: %d is taking off with Priority %.2f\n", plane->id, plane->priority);
 				el_prat->runways.remove(plane);
+				MyVariable::getInstance()->prepareAirplane(plane->airplane, 1);
+				MyVariable::getInstance()->setSimulationAirplane(plane->airplane);
+				plane->airplane->setFinish(true);
 			}
 
 
