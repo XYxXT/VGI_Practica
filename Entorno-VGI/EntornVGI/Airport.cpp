@@ -17,18 +17,19 @@ void Airport::service_plane(Plane* plane) {
 
 	if (fingers.size() == n_fingers) {
 		printf("Airport Collapsed: Fingers full\n");
-		//system("PAUSE");
-		//exit(1);
 		MyVariable::getInstance()->setFinishAnimation(true);
 		MyVariable::getInstance()->clearAirplaneList();
 		MyVariable::getInstance()->setSimulationAirplane(NULL);
 		MyVariable::getInstance()->setSimulation(false);
 		MyVariable::getInstance()->clearAirplaneList();
 	}
-	plane->service_time = time(NULL);
-	this->fingers.push_front(plane);
-	printf("Plane: %d is in service\n", plane->id);
-	printf("Planes in service: %d\n", fingers.size());
+	else
+	{
+		plane->service_time = time(NULL);
+		this->fingers.push_front(plane);
+		printf("Plane: %d is in service\n", plane->id);
+		printf("Planes in service: %d\n", fingers.size());
+	}
 }
 
 void Airport::departure(std::vector<Plane*> departures) {

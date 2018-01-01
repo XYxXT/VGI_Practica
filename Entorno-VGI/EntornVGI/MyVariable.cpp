@@ -191,7 +191,7 @@ void MyVariable::calcNextPositionAirplane(Airplane *airplane) {
 		}
 
 
-		_D3DVECTOR nextPositionAir = calcNextPosition(*actualPosition, *direction, 1);
+		_D3DVECTOR nextPositionAir = calcNextPosition(*actualPosition, *direction, ANIMATION_MOVEMENT);
 		if (directionVector.z >= 0)
 			actualPosition->z = nextPositionAir.z < nextPosition->z ? nextPositionAir.z : nextPosition->z;
 		else

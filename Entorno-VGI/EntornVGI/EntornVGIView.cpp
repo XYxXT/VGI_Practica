@@ -3843,6 +3843,9 @@ void changerPosition() {
 
 void CEntornVGIView::OnAnimacionEnd()
 {
+	for (int i = 0; i < FINGER_SIZE; i++) {
+		MyVariable::getInstance()->getFingerList()[i] = false;
+	}
 	MyVariable::getInstance()->setFinishAnimation(true);
 	MyVariable::getInstance()->clearAirplaneList();
 	MyVariable::getInstance()->setSimulationAirplane(NULL);
@@ -4080,21 +4083,37 @@ void check_runways(Airport* el_prat) {
 
 	std::list<Plane*> temp = el_prat->buffer;
 
-
-	for (Plane* plane : temp) {
-		if (el_prat->runways.size() < el_prat->n_runways) {
-
-			el_prat->runways.push_back(plane);
-			if (plane->landing)
-				plane->landing_time = time(NULL);
-			else
-				plane->take_off_time = time(NULL);
-
-			el_prat->buffer.remove(plane);
-		}
-
+	if (el_prat->buffer.size() > MAX_PLANES_WAITING)
+	{
+		printf("Collapsed Airspace\n");
+		MyVariable::getInstance()->setFinishAnimation(true);
+		MyVariable::getInstance()->clearAirplaneList();
+		MyVariable::getInstance()->setSimulationAirplane(NULL);
+		MyVariable::getInstance()->setSimulation(false);
+		MyVariable::getInstance()->clearAirplaneList();
 	}
+	else
+	{
+		for (Plane* plane : temp) {
+			if (el_prat->runways.size() < el_prat->n_runways) {
 
+				el_prat->runways.push_back(plane);
+				if (plane->landing)
+				{
+					plane->landing_time = time(NULL);
+					printf("Plane %d is landing\n", plane->id);
+					plane->airplane->setFingerID(MyVariable::getInstance()->getFreeFinger());
+					MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
+					MyVariable::getInstance()->setSimulationAirplane(plane->airplane);
+					MyVariable::getInstance()->addAirplane(plane->airplane);
+				}
+				else
+					plane->take_off_time = time(NULL);
+
+				el_prat->buffer.remove(plane);
+			}
+		}
+	}
 }
 
 
@@ -4107,14 +4126,10 @@ void process_planes(Airport* el_prat) {
 		if (plane->landing) {
 
 			if (time(NULL) - plane->landing_time >= el_prat->landing_duration) {
-				printf("Plane %d has landed\n", plane->id);
+				//printf("Plane %d has landed\n", plane->id);
 				el_prat->service_plane(plane);
 				el_prat->runways.remove(plane);
 				plane->landing = false;
-				plane->airplane->setFingerID(MyVariable::getInstance()->getFreeFinger());
-				MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
-				MyVariable::getInstance()->setSimulationAirplane(plane->airplane);
-				MyVariable::getInstance()->addAirplane(plane->airplane);
 			}
 
 		}
@@ -4134,10 +4149,6 @@ void process_planes(Airport* el_prat) {
 	}
 
 }
-
-//plane->airplane->setFingerID(fingerId);
-//MyVariable::getInstance()->prepareAirplane(plane->airplane, 0);
-//MyVariable::getInstance()->addAirplane(plane->airplane);
 
 void initSimulation() {
 
@@ -4168,7 +4179,7 @@ void initSimulation() {
 		check_runways(&el_prat);
 
 
-		if (time(NULL) - last_arrival >= next_arrival) {
+		if (time(NULL) - last_arrival >= next_arrival && MyVariable::getInstance()->isSimulation()) {
 			Plane* plane = new Plane(distribution_1(generator_1), distribution_2(generator_2));
 			el_prat.buffer.push_back(plane);
 			last_arrival = plane->spawn_time;
@@ -4184,6 +4195,10 @@ void initSimulation() {
 
 void CEntornVGIView::OnAnimacionSimulation()
 {
+	OnAnimacionEnd();
+	projeccio = PERSPECT;
+	OnProjeccioPerspectiva();
+	OnIluminacioPlana();
 	if (!MyVariable::getInstance()->isSimulation()) {
 		MyVariable::getInstance()->setSimulation(true);
 		objecte = ANIMATION;

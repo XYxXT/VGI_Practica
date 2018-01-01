@@ -103,7 +103,7 @@ void drawAirplane(Airplane* airplane) {
 	glRotatef(airplane->getDirection()->x, 1, 0, 0);
 	glRotatef(airplane->getDirection()->y, 0, 1, 0);
 	//glRotatef(90, 1, 0, 0);
-	glScalef(0.0002, 0.0002, 0.0002);
+	glScalef(0.0005, 0.0005, 0.0005);
 	glCallList(PROMETHEUS);
 	glPopMatrix();
 
